@@ -20,9 +20,6 @@ if(!isset($_POST['guess'])
     || empty($_POST['guess'])){
     $_response = 'pas de nombre';
 }
-if(!isset($_POST['reset'])){
-    unset($_COOKIE['PHPSESSID']);
-}
 else{
 
     $guess = $_POST['guess'];
