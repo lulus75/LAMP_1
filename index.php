@@ -1,7 +1,8 @@
 <?php
 session_start();
-if(empty($_SESSION['choice'])){
+if(empty($_SESSION['choice']) || isset($_POST['reset'])){
     $choice = rand(0,5);
+    $_SESSION['essai'] = 0;
     $_SESSION['choice'] = $choice;
 }else{
     $choice = $_SESSION['choice'];
@@ -51,8 +52,10 @@ else{
 </head>
 <body>
 <form method='post'>
-    <input type="text" name="guess">
+    <h1>Search the numb :</h1><br>
+    <input type="text" name="guess" autofocus>
     <input type="submit" name="valider">
+    <input type="submit" name="reset" value="reset">
     <?php echo($response) ?><br><br>
     Essai : <?php echo($essai) ?> <br><br>
     Meilleur score :<?php echo($_SESSION['best']) ?>
