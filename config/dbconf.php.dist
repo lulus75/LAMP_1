@@ -1,0 +1,6 @@
+<?php
+$config = [
+  "host" => "mysql:host=127.0.0.1;dbname=game1" ,
+  "user" => "username" ,
+"password" => "password",
+];
