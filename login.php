@@ -8,6 +8,8 @@ if(isset($_SESSION['user'])){
     header("Location: /");
     exit;
 }
+
+
 $errormessage = null;
 if(isset($_POST['username'])){
     global $config;
@@ -22,7 +24,7 @@ if(isset($_POST['username'])){
         $errormessage = "Wrong username";
     }elseif (empty($_POST["password"])) {
         $errormessage = "No password";
-    }elseif ($_POST["password"] != $result["password"]) {
+    }elseif (sha1($_POST["password"]) != $result["password"]) {
         $errormessage = "Wrong password";
     }else{
         $_SESSION['user'] = $result["login"];
