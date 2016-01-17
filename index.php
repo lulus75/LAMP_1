@@ -1,11 +1,24 @@
 <?php
+require_once("config/dbconf.php");
 session_start();
+
+global $config;
+$pdo = new PDO($config['host'], $config['user'], $config['password']);
+
 if(!isset($_SESSION['user'])){
     header("Location: /login.php");
     exit;
 }
 if(isset($_POST['reset_best'])){
     unset($_SESSION['best_score']);
+    $_SESSION['score'] = null;
+    $resetBest = $pdo->prepare("UPDATE users
+            SET best_score = :score
+            WHERE login = :login;"
+    );
+    $resetBest->bindParam("score",$_SESSION['score']);
+    $resetBest->bindParam("login",$_SESSION['user']);
+    $resetBest->execute();
 }
 if(empty($_SESSION['choice']) || isset($_POST['reset'])){
     $choice  =  rand(0,100);
@@ -31,6 +44,14 @@ if( !isset($_POST['guess'])
         if( !isset($_SESSION['best_score'])
             || $_SESSION['best_score'] > $_SESSION['score']){
             $_SESSION['best_score'] = $_SESSION['score'];
+
+            $q = $pdo->prepare("UPDATE users
+            SET best_score = :score
+            WHERE login = :login;"
+            );
+            $q->bindParam("score",$_SESSION['score']);
+            $q->bindParam("login",$_SESSION['user']);
+            $q->execute();
         }
         unset($_SESSION['choice']);
     }
@@ -64,6 +85,21 @@ Nombre de coup : <?php echo $_SESSION['score']; ?><br>
 <form method="POST" action="/login.php">
     <input type="submit" name="logout" value="Logout">
 </form>
+<?php
 
+
+$table = $pdo->prepare("SELECT login, best_score
+                        from users
+                        ORDER BY 'best_score' LIMIT 0,10"
+);
+$table->execute();
+echo('<table border="1px">');
+echo('<th>Nom</th><th>Score</th>');
+while($result = $table->fetch()){
+    echo('<tr>'.'<td>'.$result['login'].'</td>'.'<td>'.$result['best_score'].'</td>'.'</tr>');
+}
+echo('</table>');
+
+?>
 </body>
 </html>
