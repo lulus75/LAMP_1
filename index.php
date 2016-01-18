@@ -27,6 +27,7 @@ if(empty($_SESSION['choice']) || isset($_POST['reset'])){
     $_SESSION['score'] = $r['save_score'];
     $_SESSION['choice'] = $r['save_number'];
     $_SESSION['response'] = $r['save_response'];
+    $_SESSION['guess']=$r['save_guess'];
 }
 if( empty($_POST['guess'])){
     if($_SESSION['response'] == null){
@@ -71,11 +72,12 @@ $q->execute();
 
 function save($pdo){
     $q = $pdo->prepare("UPDATE users
-                           SET save_score = :score ,save_number =:choice, save_response =:response
+                           SET save_score = :score ,save_number =:choice, save_response =:response, save_guess=:guess
                            WHERE login =:login"
     );
     $q->bindParam("score",$_SESSION['score']);
     $q->bindParam("response",$_SESSION['response']);
+    $q->bindParam("guess",$_POST['guess']);
     $q->bindParam("choice",$_SESSION['choice']);
     $q->bindParam("login",$_SESSION['user']);
     $q->execute();
@@ -86,7 +88,7 @@ function save($pdo){
 /* Save back*/
 
 function backup($pdo){
-    $q = $pdo->prepare("SELECT save_score, save_number, save_response
+    $q = $pdo->prepare("SELECT save_score, save_number, save_response, save_guess
                              FROM users
                              WHERE login =:login"
     );
@@ -134,7 +136,8 @@ Nombre de coup : <?php echo $_SESSION['score']; ?><br>
     <input type="submit" name="reset" value="reset">
     <input type="submit" name="reset_best" value="reset best">
 </form>
-<em>(La réponse est <?php echo $_SESSION['choice']?>)</em>
+<em>(Dernière valeur saisie: <?php echo $_SESSION['guess'] ?>)
+    (La réponse est <?php echo $_SESSION['choice']?>)</em>
 
 
 <form method="POST" action="/login.php">
