@@ -4,13 +4,13 @@ session_start();
 
 global $config;
 $pdo = new PDO($config['host'], $config['user'], $config['password']);
-
+$r = backup($pdo);
 if(!isset($_SESSION['user'])){
     save($pdo);
     header("Location: /login.php");
     exit;
 }
-$r = backup($pdo);
+
 board($pdo);
 if(isset($_POST['reset_best'])){
     unset($_SESSION['best_score']);
@@ -55,7 +55,7 @@ if( empty($_POST['guess'])){
 function board($pdo){
 $q = $pdo->prepare("SELECT login, best_score
                         from users
-                        ORDER BY 'best_score' LIMIT 0,10"
+                        ORDER BY best_score LIMIT 0,10"
 );
 $q->execute();
     echo('<table border="1px">');
@@ -106,15 +106,15 @@ function best($pdo){
     $q->execute();
     $q->fetch();
 
+
 }
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    
     <title>Des papiers dans un bol </title>
 </head>
 <body>
